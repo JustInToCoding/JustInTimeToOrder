@@ -2,21 +2,19 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { StyleSheet, Text, View } from 'react-native';
 import { fetchProductsActionCreator } from '../utilities/Actions';
+import ProductsList from './ProductsList';
 
 class MainContainer extends React.Component {
-  constructor(props) {
-    super(props);
-    props.fetchProducts();
+  componentDidMount() {
+    this.props.fetchProducts();
   }
 
   render() {
-    console.log(this.props.products);
+    let products = (this.props.products) ? <ProductsList products={this.props.products} /> : <Text>Products are not loaded.</Text>
+
     return (
       <View style={styles.container}>
-        <Text>{Array.isArray(this.props.products) ? this.props.products[0].name : 'undefined'}</Text>
-        <Text>Open up App.js to start working on your app!</Text>
-        <Text>Changes you make will automatically reload.</Text>
-        <Text>Shake your phone to open the developer menu.</Text>
+        {products}
       </View>
     );
   }
