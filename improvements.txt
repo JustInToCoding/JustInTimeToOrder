@@ -1,0 +1,6 @@
+* UI can be improved with for example material design
+* The Included array received from the API at /orders can be made obsolete by using the array received in the beginning from /products by keeping it in the store and using the relationships array.
+* GraphQL could be used instead of JSONAPI, with the added benefit of that it's newer and actively developed on. (and more benefits..)
+* Posibillity to order multiple products at once.
+* Include tests
+*
