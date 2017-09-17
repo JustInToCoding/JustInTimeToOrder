@@ -3,7 +3,7 @@ import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import createSagaMiddleware from 'redux-saga'
 import MainContainer from './components/MainContainer';
-import { fetchProductsSaga } from './utilities/Saga';
+import { fetchProductsSaga, placeOrderSaga } from './utilities/Sagas';
 import { productsReducer } from './utilities/Reducers'
 
 const reducer = productsReducer;
@@ -17,6 +17,7 @@ function configureStore(initialState) {
 const store = configureStore({});
 
 sagaMiddleware.run(fetchProductsSaga);
+sagaMiddleware.run(placeOrderSaga);
 
 export default class App extends React.Component {
   render() {
