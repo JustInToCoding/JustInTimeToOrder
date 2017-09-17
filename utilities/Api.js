@@ -38,14 +38,14 @@ export async function getProducts() {
   throw new TypeError("Oops, we haven't got JSON!");
 }
 
-export async function postPlaceOrder(productIds, ammount) {
+export async function postPlaceOrder(productIds, amount) {
   let response = await post('http://jaapi.nerdie.works/orders',
     {
       data: {
         type: 'orders',
         attributes: {
           products: productIds,
-          ammount: ammount
+          amount: amount
         }
       }
     }
@@ -58,6 +58,13 @@ export async function postPlaceOrder(productIds, ammount) {
   throw new TypeError("Oops, we haven't got JSON!");
 }
 
-export function getOrder(orderId) {
-
+export async function getOrder(orderId) {
+  let response = await get(`http://jaapi.nerdie.works/orders/${orderId}`);
+  // content-type is application/json
+  let contentType = response.headers.get("content-type");
+  if(contentType && contentType.includes("application/json")) {
+    let jsonResponse = await response.json();
+    return {data: deserializeData(jsonResponse.data), included: deserializeData(jsonResponse.included)};
+  }
+  throw new TypeError("Oops, we haven't got JSON!");
 }

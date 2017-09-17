@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, FlatList, Button } from 'react-native';
+import { StyleSheet, Text, TextInput, View, FlatList, Button } from 'react-native';
 
 class ProductsList extends React.Component {
   render() {
@@ -11,9 +11,24 @@ class ProductsList extends React.Component {
             <View>
               <Text style={styles.item}>{item.name}</Text>
               <Text style={styles.item}>{item.description}</Text>
-              <Text style={styles.item}>{item.price}</Text>
+              <Text style={styles.item}>&euro;{item.price},-</Text>
+              <TextInput
+                style={{height: 40, borderColor: 'gray', borderWidth: 1}}
+                onChangeText={(text) => {
+                    let newState = { ...this.state };
+                    newState[item.key] = text;
+                    this.setState(newState);
+                  }
+                }
+                keyboardType={'numeric'}
+                value={this.state[item.key]}
+              />
               <Button
-                onPress={() => this.props.placeOrder(item.key, 2)}
+                onPress={() => {
+                  if(this.state[item.key] && parseInt(this.state[item.key]) > 0) {
+                    this.props.placeOrder([item.key], parseInt(this.state[item.key]));
+                  }
+                }}
                 title="Order"
                 color="#841584"
                 accessibilityLabel="Order this product"

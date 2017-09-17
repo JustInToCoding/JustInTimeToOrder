@@ -1,8 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { StyleSheet, Text, View } from 'react-native';
-import { fetchProductsActionCreator, orderProductActionCreator, setOrderedActionCreator } from '../utilities/Actions';
+import { fetchProductsActionCreator, orderProductActionCreator, setOrderedActionCreator, fetchOrderActionCreator } from '../utilities/Actions';
 import ProductsList from './ProductsList';
+import OrderDetail from './OrderDetail';
 
 class MainContainer extends React.Component {
 
@@ -10,14 +11,13 @@ class MainContainer extends React.Component {
     this.props.fetchProducts();
   }
 
-  placeOrder(productIds, ammount) {
-    this.props.placeOrder(productIds, ammount);
-    this.setState({...this.state, hasOrdered: true});
-  }
-
   render() {
-    let products = (this.props.products) ? <ProductsList products={this.props.products} placeOrder={this.props.placeOrder} /> : <Text>Products are not loaded.</Text>;
-    let currentView = !this.props.hasOrdered ? products : <Text>You have ordered!</Text>;
+    let products = (this.props.products) ?
+      <ProductsList products={this.props.products} placeOrder={this.props.placeOrder} /> :
+      <Text>Products are being loaded.</Text>;
+    let currentView = !this.props.hasOrdered ?
+      products :
+      <OrderDetail order={this.props.order} orderedProducts={this.props.orderedProducts} fetchOrder={this.props.fetchOrder} goBack={this.props.goBack} />;
 
     return (
       <View style={styles.container}>
@@ -40,7 +40,9 @@ const mapStateToProps = (state, ownProps) => {
   return {
     // MainContainer will have access to 'state.products' through 'this.props.products'
     products: state.products,
-    hasOrdered: state.hasOrdered
+    hasOrdered: state.hasOrdered,
+    order: state.order,
+    orderedProducts: state.orderedProducts
   }
 }
 
@@ -49,9 +51,15 @@ const mapDispatchToProps = (dispatch, ownProps) => {
     fetchProducts: () => {
       dispatch(fetchProductsActionCreator());
     },
-    placeOrder: (productIds, ammount) => {
-      dispatch(orderProductActionCreator(productIds, ammount));
+    placeOrder: (productIds, amount) => {
+      dispatch(orderProductActionCreator(productIds, amount));
       dispatch(setOrderedActionCreator(true));
+    },
+    fetchOrder: (orderId) => {
+      dispatch(fetchOrderActionCreator(orderId));
+    },
+    goBack: () => {
+      dispatch(setOrderedActionCreator(false));
     }
   }
 }

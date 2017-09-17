@@ -1,5 +1,5 @@
 import { call, put, takeEvery, takeLatest } from 'redux-saga/effects'
-import { getProducts, postPlaceOrder } from './Api';
+import { getProducts, postPlaceOrder, getOrder } from './Api';
 
 // worker Saga: will be fired on PRODUCTS_FETCH_REQUESTED actions
 const fetchProducts = function* (action) {
@@ -13,10 +13,19 @@ const fetchProducts = function* (action) {
 
 const placeOrder = function* (action) {
   try {
-      const placeOrderResult = yield call(postPlaceOrder, action.payload.productIds, action.payload.ammount);
+      const placeOrderResult = yield call(postPlaceOrder, action.payload.productIds, action.payload.amount);
       yield put({type: 'PRODUCT_ORDER_SUCCEEDED', ...placeOrderResult});
    } catch (e) {
       yield put({type: 'PRODUCT_ORDER_FAILED', message: e.message});
+   }
+}
+
+const fetchOrder = function* (action) {
+  try {
+      const orderResult = yield call(getOrder, action.orderId);
+      yield put({type: 'FETCH_ORDER_SUCCEEDED', ...orderResult});
+   } catch (e) {
+      yield put({type: 'FETCH_ORDER_FAILED', message: e.message});
    }
 }
 
@@ -28,4 +37,8 @@ const placeOrderSaga = function* () {
   yield takeEvery('PRODUCT_ORDER_REQUESTED', placeOrder);
 };
 
-export { fetchProductsSaga, placeOrderSaga };
+const fetchOrderSaga = function* () {
+  yield takeLatest('ORDER_FETCH_REQUESTED', fetchOrder);
+};
+
+export { fetchProductsSaga, placeOrderSaga, fetchOrderSaga };
